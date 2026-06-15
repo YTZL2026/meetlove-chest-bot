@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>遇见手游 - 宝箱怪挂机 傻瓜式一键指南</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", sans-serif;
+        }
+
+        body {
+            /* 遇见游戏画风：明亮草原+温暖阳光+魔法氛围 */
+            background:
+                /* 顶部魔法光晕 */
+                radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,220,140,0.25) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 20% 15%, rgba(180,220,255,0.2) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 35% at 80% 10%, rgba(255,200,150,0.2) 0%, transparent 60%),
+                /* 中间渐变：蓝天 → 暖阳 → 草原 */
+                linear-gradient(180deg,
+                    #87CEEB 0%,        /* 天空蓝 */
+                    #B8D4E3 8%,        /* 天际线 */
+                    #E8D5A3 18%,       /* 暖阳金 */
+                    #C8D8A0 28%,       /* 草原浅绿 */
+                    #8DB580 45%,       /* 草原中绿 */
+                    #6A9B6A 65%,       /* 深绿 */
+                    #3D6B3D 85%,       /* 森林绿 */
+                    #1A3A1A 100%       /* 底部暗绿 */
+                );
+            background-attachment: fixed;
+            color: #2c1810;
+            padding: 20px;
+            line-height: 1.8;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 魔法粒子浮动效果（模拟游戏中的魔法光点） */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background:
+                radial-gradient(2px 2px at 10% 20%, rgba(255,255,200,0.6), transparent),
+                radial-gradient(2px 2px at 25% 35%, rgba(255,255,200,0.5), transparent),
+                radial-gradient(2px 2px at 40% 15%, rgba(255,255,200,0.7), transparent),
+                radial-gradient(3px 3px at 55% 30%, rgba(255,240,180,0.6), transparent),
+                radial-gradient(2px 2px at 70% 22%, rgba(255,255,200,0.5), transparent),
+                radial-gradient(2px 2px at 85% 18%, rgba(255,255,200,0.7), transparent),
+                radial-gradient(3px 3px at 15% 40%, rgba(255,240,180,0.4), transparent),
+                radial-gradient(2px 2px at 60% 45%, rgba(255,255,200,0.5), transparent),
+                radial-gradient(2px 2px at 90% 38%, rgba(255,255,200,0.6), transparent),
+                radial-gradient(3px 3px at 33% 28%, rgba(255,240,180,0.5), transparent);
+            pointer-events: none;
+            z-index: 0;
+            animation: sparkle 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes sparkle {
+            0%   { opacity: 0.6; transform: translateY(0); }
+            100% { opacity: 1.0; transform: translateY(-10px); }
+        }
+
+        /* 草地纹理底部 */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0; left: 0;
+            width: 100%; height: 120px;
+            background: linear-gradient(0deg,
+                rgba(30,60,20,0.5) 0%,
+                rgba(50,90,40,0.3) 40%,
+                transparent 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .mask {
+            background: linear-gradient(180deg,
+                rgba(255,252,240,0.88) 0%,
+                rgba(255,250,235,0.92) 30%,
+                rgba(252,248,230,0.90) 100%);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 35px;
+            border-radius: 20px;
+            box-shadow:
+                0 8px 40px rgba(20,40,10,0.35),
+                0 0 0 1px rgba(180,150,100,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.6);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+        }
+
+        /* 顶部装饰边框 */
+        .mask::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 40px; right: 40px;
+            height: 3px;
+            background: linear-gradient(90deg,
+                transparent, #c8a050, #e8c870, #c8a050, transparent);
+            border-radius: 2px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            color: #5a3a10;
+            margin-bottom: 8px;
+            text-shadow: 0 1px 2px rgba(200,160,80,0.4);
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7a6a50;
+            margin-bottom: 35px;
+            font-size: 15px;
+            letter-spacing: 3px;
+        }
+
+        .card {
+            background: linear-gradient(135deg,
+                rgba(255,252,240,0.7) 0%,
+                rgba(245,240,220,0.8) 100%);
+            border-left: 4px solid #8db560;
+            padding: 22px 24px;
+            margin: 18px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(100,80,40,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 18px rgba(100,80,40,0.18);
+        }
+
+        .card h2 {
+            color: #4a6a30;
+            margin-bottom: 16px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card h3 {
+            color: #8a6a20;
+            margin: 18px 0 10px;
+            font-size: 16px;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed rgba(180,150,100,0.3);
+        }
+
+        .tip {
+            background: linear-gradient(135deg, rgba(200,180,120,0.12), rgba(180,220,140,0.15));
+            border-left: 4px solid #c8a050;
+            padding: 12px 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+            color: #6a5020;
+            font-size: 14px;
+        }
+
+        .warn {
+            background: linear-gradient(135deg, rgba(255,120,100,0.08), rgba(255,150,120,0.1));
+            border-left: 4px solid #e06040;
+            padding: 14px 16px;
+            margin: 14px 0;
+            border-radius: 8px;
+            color: #8a3020;
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: rgba(255,252,240,0.5);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(100,80,40,0.08);
+        }
+
+        table td, table th {
+            border: 1px solid rgba(180,160,120,0.25);
+            padding: 11px 14px;
+            text-align: left;
+        }
+
+        table th {
+            background: linear-gradient(180deg, #e8d8a0, #dcc890);
+            color: #4a3020;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        table td {
+            color: #4a3a20;
+            font-size: 14px;
+        }
+
+        code {
+            background: rgba(200,180,140,0.2);
+            padding: 3px 10px;
+            border-radius: 5px;
+            color: #6a4a20;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13px;
+            border: 1px solid rgba(180,150,100,0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(180deg, #8db560, #6a9b40);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 0 4px;
+            box-shadow: 0 2px 6px rgba(100,140,60,0.3);
+        }
+
+        .final {
+            text-align: center;
+            font-size: 16px;
+            color: #5a3a10;
+            margin-top: 35px;
+            font-weight: bold;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(200,180,120,0.15), rgba(180,220,140,0.12));
+            border-radius: 12px;
+            border: 1px dashed rgba(180,150,100,0.3);
+        }
+
+        .efficiency-note {
+            font-size: 12px;
+            color: #8a7050;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .mask { padding: 25px 18px; margin: 0 5px; }
+            .title { font-size: 24px; }
+            .card { padding: 16px; }
+            table td, table th { padding: 8px 10px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mask">
+        <div class="title">✨ 宝箱怪挂机脚本 · 真·傻瓜式一键操作 ✨</div>
+        <div class="subtitle">全程纯点击 ｜ 不用懂代码 ｜ 5 分钟搞定 ｜ 新手秒会</div>
+
+        <!-- ═══════════ 设备选择 ═══════════ -->
+        <div class="card">
+            <h2>📱 第一步：先选你的设备（10 秒）</h2>
+            <table>
+                <tr>
+                    <th>设备类型</th>
+                    <th>直接查看</th>
+                </tr>
+                <tr>
+                    <td>📱 手机玩「遇见」</td>
+                    <td>方案 A（手机一键挂机）</td>
+                </tr>
+                <tr>
+                    <td>💻 电脑模拟器玩「遇见」</td>
+                    <td>方案 B（电脑一键挂机）</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ═══════════ 方案A ═══════════ -->
+        <div class="card">
+            <h2>📘 方案 A：手机党（AutoX.js v7）5 分钟搞定</h2>
+
+            <h3>A1 装工具（1 分钟）</h3>
+            <p>1. 手机浏览器打开：<code>https://github.com/aiselp/AutoX/releases</code></p>
+            <p>2. 下载最新 .apk（主流手机选 <code>arm64-v8a</code>，旧手机选 <code>armeabi-v7a</code>）</p>
+            <p>3. 安装时允许「未知来源」→ 打开 AutoX.js</p>
+            <div class="tip">⚠️ 原 <code>kkevsekk1/AutoX</code> 已停止维护（旧链接已失效），现使用社区维护的 v7 分支</div>
+
+            <h3>A2 开权限（30 秒）</h3>
+            <p>按弹窗提示开启：<strong>无障碍服务</strong> + <strong>悬浮窗</strong> → 找到 AutoX.js 打开开关即可</p>
+
+            <h3>A3 导脚本（30 秒）</h3>
+            <p>1. 把 <code>chest_farm_main.js</code> 微信发给自己并保存到手机</p>
+            <p>2. AutoX.js 点右下角【+】→ 导入 → 选中文件</p>
+
+            <h3>A4 改配置（2 分钟，只改 4 个数字）</h3>
+            <table>
+                <tr>
+                    <td>📐 屏幕分辨率</td>
+                    <td>1080 开头不用改，其他查手机型号填写</td>
+                </tr>
+                <tr>
+                    <td>⚔️ 击杀速度</td>
+                    <td>秒杀填 500｜打 2-3 下填 2000｜打 5 下以上填 4000</td>
+                </tr>
+                <tr>
+                    <td>🗺️ 切图坐标</td>
+                    <td>1080 分辨率直接跳过，其他按比例换算</td>
+                </tr>
+                <tr>
+                    <td>🐴 坐骑按钮坐标</td>
+                    <td><strong>新手必改！</strong>见下方「坐骑设置」说明</td>
+                </tr>
+            </table>
+            <div class="tip">✅ 改完一定要点右上角【保存】！</div>
+
+            <h3>🐴 A4.5 坐骑设置（新手关键！）</h3>
+            <p>宝箱怪受惊后 <strong>8 秒</strong> 钻地消失。无称号/无速度装的新手跑步追不上，<strong>必须上坐骑</strong>。</p>
+            <p>1. 在 AutoX.js 中开启「指针位置」（悬浮窗 → 指针位置）</p>
+            <p>2. 切到游戏，手指点一下坐骑按钮，看屏幕上显示的坐标</p>
+            <p>3. 把坐标填到脚本里的 <code>mount.btnX</code> 和 <code>mount.btnY</code></p>
+            <p>4. 常见位置参考（1080×2400）：</p>
+            <table>
+                <tr><th>机型/布局</th><th>大致坐标</th></tr>
+                <tr><td>右下角小图标</td><td><code>1000, 2100</code></td></tr>
+                <tr><td>右侧中间圆形按钮</td><td><code>1030, 1200</code></td></tr>
+                <tr><td>底部技能栏旁边</td><td><code>950, 1950</code></td></tr>
+            </table>
+            <div class="warn">⚠️ 没有坐骑的新手：脚本里把 <code>mount.enabled</code> 改成 <code>false</code>，否则会空点屏幕</div>
+
+            <h3>A5 开始挂机（30 秒）</h3>
+            <p>1. 打开遇见 → 站在切图边界（如家门口 2152, 3161 或心灵草原 1953, 1927）</p>
+            <p>2. 开游戏内置挂机：✅ 自动战斗，❌ 关采集</p>
+            <p>3. <strong>画质调到最低</strong>（草变矮更容易看到宝箱怪）</p>
+            <p>4. 回到 AutoX.js → 点脚本 → 点【运行】▶️</p>
+
+            <h3>A6 停止挂机</h3>
+            <p>按 <strong>音量上键</strong> 即可一键停止 🛑</p>
+        </div>
+
+        <!-- ═══════════ 方案B ═══════════ -->
+        <div class="card">
+            <h2>💻 方案 B：电脑模拟器（ADB）5 分钟搞定</h2>
+
+            <h3>B1 装 Python（2 分钟）</h3>
+            <p>1. 官网下载安装：<code>python.org</code></p>
+            <p>2. 必勾选：<code>Add Python to PATH</code></p>
+
+            <h3>B2 开 ADB（1 分钟）</h3>
+            <p>1. 模拟器设置里开启 ADB 调试</p>
+            <p>2. Win+R 输入 <code>cmd</code> 回车</p>
+            <p>3. 输入命令：<code>adb devices</code></p>
+            <p>4. 连不上就用对应端口命令：</p>
+            <table>
+                <tr><th>模拟器</th><th>连接命令</th></tr>
+                <tr><td>雷电</td><td><code>adb connect 127.0.0.1:5555</code></td></tr>
+                <tr><td>MuMu</td><td><code>adb connect 127.0.0.1:7555</code></td></tr>
+                <tr><td>蓝叠</td><td><code>adb connect 127.0.0.1:21503</code></td></tr>
+            </table>
+
+            <h3>B3 改配置（1 分钟）</h3>
+            <p>记事本打开脚本，改：分辨率 + 击杀速度 + <strong>坐骑按钮坐标</strong>（重要！见方案A的坐骑设置说明）。模拟器建议直接设置分辨率 1080×2400 最省事。</p>
+
+            <h3>B4 开始挂机</h3>
+            <p>cmd 里依次输入两行命令回车：</p>
+            <p><code>cd 你的脚本所在文件夹路径</code></p>
+            <p><code>python chest_farm_adb.py</code></p>
+
+            <h3>B5 停止挂机</h3>
+            <p>按 <code>Ctrl + C</code></p>
+        </div>
+
+        <!-- ═══════════ 效率参考（社区实测版） ═══════════ -->
+        <div class="card">
+            <h2>⏱️ 效率参考（社区实测数据）</h2>
+            <p style="margin-bottom:12px;color:#6a5030;">⚠️ <strong>效率瓶颈不在脚本，而在游戏机制本身</strong>——每次切图系统刷新一只宝箱怪，但它不一定刷在角色身边，挂机 AI 也可能优先追普通怪。</p>
+            <table>
+                <tr>
+                    <th>配置</th>
+                    <th>完整周期</th>
+                    <th>理论上限</th>
+                    <th>实测参考</th>
+                    <th>8 小时预估</th>
+                </tr>
+                <tr>
+                    <td>⚡ 秒杀+好设备</td>
+                    <td>~15 秒</td>
+                    <td>~240 只/h</td>
+                    <td>100-150 只/h</td>
+                    <td>800-1200 只</td>
+                </tr>
+                <tr>
+                    <td>🎯 正常配置（推荐）</td>
+                    <td>~22 秒</td>
+                    <td>~160 只/h</td>
+                    <td>50-100 只/h</td>
+                    <td>400-800 只</td>
+                </tr>
+                <tr>
+                    <td>🛡️ 保守/慢设备</td>
+                    <td>~30 秒</td>
+                    <td>~120 只/h</td>
+                    <td>30-60 只/h</td>
+                    <td>200-500 只</td>
+                </tr>
+            </table>
+            <p class="efficiency-note">📌 社区玩家实测：纯手动切图约 60 只/h，脚本挂机平均约 50 只/h（310 只 / 6 小时）。脚本切图法相当于把"手动滑屏"自动化，效率上限受刷新位置 RNG 和挂机 AI 锁敌优先级影响，实际浮动 ±30%。</p>
+            <p class="efficiency-note">🐴 <strong>v2.2 坐骑版</strong>：脚本在切图后自动上坐骑，新手也能追上宝箱怪。有坐骑的玩家实际效率可提升 30-50%（原先追不上→现在能追上）。</p>
+            <p class="efficiency-note">💡 游戏内置挂机刷新计时器为 16-25 秒，切图可绕过该限制强制刷新，但地图加载 + 索敌 + 击杀仍需要时间。</p>
+        </div>
+
+        <!-- ═══════════ 故障排除 ═══════════ -->
+        <div class="card">
+            <h2>🛠 遇到问题？傻瓜式解决</h2>
+            <table>
+                <tr>
+                    <td>角色不动/不切图</td>
+                    <td>游戏画质必须调到【最低】；检查切图坐标是否匹配分辨率</td>
+                </tr>
+                <tr>
+                    <td>切图不打怪</td>
+                    <td>把击杀速度数字调大；确认武器为弓/法杖（远程）；确认游戏挂机开了自动战斗</td>
+                </tr>
+                <tr>
+                    <td>无障碍未开启</td>
+                    <td>设置 → 辅助功能 → 无障碍 → 找到 AutoX.js 重启开关</td>
+                </tr>
+                <tr>
+                    <td>追不上宝箱怪</td>
+                    <td>新手常见！开启脚本坐骑功能🐴，确认坐骑按钮坐标正确。没坐骑则关掉该功能</td>
+                </tr>
+                <tr>
+                    <td>脚本报错"y1 重复"</td>
+                    <td>已修复（v2.2），下载最新版脚本即可</td>
+                </tr>
+                <tr>
+                    <td>跑着跑着去奇怪地方</td>
+                    <td>游戏挂机寻怪导致，正常现象。脚本有卡死检测会自动复位</td>
+                </tr>
+            </table>
+
+            <div class="warn">⚠️ 安全提示：每天挂 6-8 小时即可，不要 24 小时不间断。本脚本仅模拟滑屏操作，无内存修改/加速，社区目前无人因此被封。但保险起见，偶尔手动玩一下，不要永远在挂机。</div>
+        </div>
+
+        <!-- ═══════════ 总结 ═══════════ -->
+        <div class="final">
+            🎯 终极懒人总结：<br><br>
+            📱 手机 = 装 AutoX.js v7 → 导脚本 → 改 3 个数字 → 运行<br>
+            💻 电脑 = 装 Python → 开 ADB → 改配置 → <code>python chest_farm_adb.py</code><br><br>
+            <span style="font-size:13px;color:#8a7050;">v2.2 坐骑版 · AutoX 社区 v7 分支 · 效率数据基于社区实测</span>
+        </div>
+    </div>
+</body>
+</html>
